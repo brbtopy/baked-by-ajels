@@ -166,14 +166,6 @@ workbook.save(filename=excel_file)
 workbook.close()
 
 #################################################################################
-#increase counters and set read-only on files
-increase_counter(receipt_counter_file)
-increase_counter(main_counter_file)
-os.chmod(receipt_counter_file, S_IREAD|S_IRGRP|S_IROTH)
-os.chmod(main_counter_file, S_IREAD|S_IRGRP|S_IROTH)
-os.chmod(excel_file, S_IREAD|S_IRGRP|S_IROTH)
-
-#################################################################################
 #adding watermark to receipt
 instructions = {
   'parts': [
@@ -218,3 +210,11 @@ else:
   exit()
 
 os.remove("receipt_docs\\example.pdf")
+
+#################################################################################
+#increase counters and set read-only on files
+increase_counter(receipt_counter_file)
+increase_counter(main_counter_file)
+os.chmod(receipt_counter_file, S_IREAD|S_IRGRP|S_IROTH)
+os.chmod(main_counter_file, S_IREAD|S_IRGRP|S_IROTH)
+os.chmod(excel_file, S_IREAD|S_IRGRP|S_IROTH)
