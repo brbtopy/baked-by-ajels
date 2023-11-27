@@ -189,7 +189,7 @@ response = requests.request(
   'POST',
   'https://api.pspdfkit.com/build',
   headers = {
-    'Authorization': 'Bearer pdf_live_09Jw3fmsDx53azf2r0TEjwhxqlqriaVRV3TGCHtl539'
+    'Authorization': 'Bearer pdf_live_8vTpklf6KnF6ZiK5DqZrbfDJrIcDSTkSJpIlP0beDH7'
   },
   files = {
     'document': open('receipt_docs\\example.pdf', 'rb'),
