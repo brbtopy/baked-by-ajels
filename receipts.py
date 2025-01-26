@@ -9,6 +9,10 @@ from datetime import date
 from stat import S_IREAD, S_IRGRP, S_IROTH
 from stat import S_IWUSR
 from num2words import num2words
+from PIL import Image, ImageEnhance
+import fitz  # PyMuPDF
+import io
+
 
 def read_counter(directory):
     called = True
@@ -50,14 +54,14 @@ def drawMyRuler(pdf):
     pdf.drawString(10,800, 'y800')
 
 
-excel_file = "baked by ajels order workbook.xlsx"
+excel_file = "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\baked by ajels order workbook.xlsx"
 os.chmod(excel_file, S_IWUSR|S_IREAD)
 
 workbook = load_workbook(filename=excel_file)
 main_sheet = workbook["main"]
 
-main_counter_file = "counter\\counter.txt"
-receipt_counter_file =  "receipt_docs\\counter\\count.txt"
+main_counter_file = "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\counter\\counter.txt"
+receipt_counter_file =  "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\counter\\count.txt"
 
 os.chmod(receipt_counter_file, S_IWUSR|S_IREAD)
 os.chmod(main_counter_file, S_IWUSR|S_IREAD)
@@ -66,6 +70,10 @@ main_counter = read_counter(main_counter_file)
 receipt_no = read_counter(receipt_counter_file)
 
 today = date.today()
+
+print("[+] Welcome to Baked By Ajels Receipt Generator [+]")
+print("[+] Please provide the following details to generate a receipt [+]")
+print("[+] Please ensure that the amount is in Ghana Cedis [+]")
 
 username = input("Who is placing the order? ")
 username = username.title()
@@ -80,7 +88,7 @@ amount_dsp = ("%.2f" % amount)
 
 print("[+] Data collected. Generating receipt and updating records [+]")
 
-pdf = canvas.Canvas("receipt_docs\\example.pdf")
+pdf = canvas.Canvas("C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf")
 
 pdf.setTitle(username + " Baked By Ajels Receipt")
 pdf.setPageSize((800, 300))
@@ -135,7 +143,7 @@ pdf.drawString(120, 40, "Baked by Ajels")
 pdf.line(110, 35, 220, 35)
 
 #set up thank you tagging
-thanks = os.path.join(os.getcwd(), "pictures\\thanks.png")
+thanks = os.path.join(os.getcwd(), "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\pictures\\thanks.png")
 pdf.drawImage(thanks, 633, 30, width=98, height=90)
 
 #set footer
@@ -162,54 +170,47 @@ main_sheet["C" + str(cell_number)].alignment = Alignment(horizontal='left', vert
 
 main_sheet["D" + str(cell_number)] = new_prod
 
+
 workbook.save(filename=excel_file)
 workbook.close()
 
 #################################################################################
-#adding watermark to receipt
-instructions = {
-  'parts': [
-    {
-      'file': 'document'
-    }
-  ],
-  'actions': [
-    {
-      'type': 'watermark',
-      'image': 'logo',
-      'width': '40%',
-      "opacity": 0.12
-    }
-  ]
-}
+# Adding watermark to receipt
+document_path = 'C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf'
+watermark_path = 'C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\pictures\\logo.png'
+opacity = 0.07
 
-output_file = f"receipt_docs\\{username}'s Receipt.pdf"
+# Open the original document
+pdf_document = fitz.open(document_path)
+page = pdf_document.load_page(0)  # Load the first page
+pix = page.get_pixmap()
+document = Image.open(io.BytesIO(pix.tobytes()))
 
-response = requests.request(
-  'POST',
-  'https://api.pspdfkit.com/build',
-  headers = {
-    'Authorization': 'Bearer pdf_live_8vTpklf6KnF6ZiK5DqZrbfDJrIcDSTkSJpIlP0beDH7'
-  },
-  files = {
-    'document': open('receipt_docs\\example.pdf', 'rb'),
-    'logo': open('pictures\\logo.jpg', 'rb')
-  },
-  data = {
-    'instructions': json.dumps(instructions)
-  },
-  stream = True
-)
+# Resize the watermark to a larger size
+document_width, document_height = document.size
+watermark = Image.open(watermark_path).convert("RGBA")
+watermark_width = document_width // 3
+watermark_height = int(watermark.size[1] * (watermark_width / watermark.size[0]))
+watermark = watermark.resize((watermark_width, watermark_height), Image.LANCZOS)
 
-if response.ok:
-  with open(output_file, 'wb') as fd:
-    for chunk in response.iter_content(chunk_size=8096):
-      fd.write(chunk)
-else:
-  print(response.text)
-  exit()
+# Adjust the opacity of the watermark
+alpha = watermark.split()[3]
+alpha = ImageEnhance.Brightness(alpha).enhance(opacity)
+watermark.putalpha(alpha)
 
-os.remove("receipt_docs\\example.pdf")
+# Calculate the position to center the watermark
+x = (document_width - watermark_width) // 2
+y = (document_height - watermark_height) // 2
+
+# Paste the watermark onto the document
+document.paste(watermark, (x, y), watermark)
+
+# Save the result
+output_file = f"C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\{username}'s Receipt.pdf"
+document.save(output_file, format="PDF")
+pdf_document.close()
+
+os.remove("C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf")
 
 #################################################################################
 #increase counters and set read-only on files
@@ -218,3 +219,6 @@ increase_counter(main_counter_file)
 os.chmod(receipt_counter_file, S_IREAD|S_IRGRP|S_IROTH)
 os.chmod(main_counter_file, S_IREAD|S_IRGRP|S_IROTH)
 os.chmod(excel_file, S_IREAD|S_IRGRP|S_IROTH)
+
+print("[+] Receipt generated successfully [+]")
+print("[+] Receipt saved in the receipt_docs folder [+]")
