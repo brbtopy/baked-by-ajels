@@ -183,7 +183,12 @@ opacity = 0.07
 # Open the original document
 pdf_document = fitz.open(document_path)
 page = pdf_document.load_page(0)  # Load the first page
-pix = page.get_pixmap()
+
+# Increase the DPI for better clarity
+zoom = 2  # Increase the zoom factor to improve resolution
+mat = fitz.Matrix(zoom, zoom)
+pix = page.get_pixmap(matrix=mat)
+
 document = Image.open(io.BytesIO(pix.tobytes()))
 
 # Resize the watermark to a larger size
