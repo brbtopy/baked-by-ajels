@@ -54,14 +54,14 @@ def drawMyRuler(pdf):
     pdf.drawString(10,800, 'y800')
 
 
-excel_file = "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\baked by ajels order workbook.xlsx"
+excel_file = "C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\baked by ajels order workbook.xlsx"
 os.chmod(excel_file, S_IWUSR|S_IREAD)
 
 workbook = load_workbook(filename=excel_file)
 main_sheet = workbook["main"]
 
-main_counter_file = "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\counter\\counter.txt"
-receipt_counter_file =  "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\counter\\count.txt"
+main_counter_file = "C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\counter\\counter.txt"
+receipt_counter_file =  "C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\counter\\count.txt"
 
 os.chmod(receipt_counter_file, S_IWUSR|S_IREAD)
 os.chmod(main_counter_file, S_IWUSR|S_IREAD)
@@ -88,7 +88,7 @@ amount_dsp = ("%.2f" % amount)
 
 print("[+] Data collected. Generating receipt and updating records [+]")
 
-pdf = canvas.Canvas("C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf")
+pdf = canvas.Canvas("C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf")
 
 pdf.setTitle(username + " Baked By Ajels Receipt")
 pdf.setPageSize((800, 300))
@@ -143,7 +143,7 @@ pdf.drawString(120, 40, "Baked by Ajels")
 pdf.line(110, 35, 220, 35)
 
 #set up thank you tagging
-thanks = os.path.join(os.getcwd(), "C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\pictures\\thanks.png")
+thanks = os.path.join(os.getcwd(), "C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\pictures\\thanks.png")
 pdf.drawImage(thanks, 633, 30, width=98, height=90)
 
 #set footer
@@ -176,8 +176,8 @@ workbook.close()
 
 #################################################################################
 # Adding watermark to receipt
-document_path = 'C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf'
-watermark_path = 'C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\pictures\\logo.png'
+document_path = 'C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf'
+watermark_path = 'C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\pictures\\logo.jpg'
 opacity = 0.07
 
 # Open the original document
@@ -211,11 +211,11 @@ y = (document_height - watermark_height) // 2
 document.paste(watermark, (x, y), watermark)
 
 # Save the result
-output_file = f"C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\{username}'s Receipt.pdf"
+output_file = f"C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\{username}'s Receipt.pdf"
 document.save(output_file, format="PDF")
 pdf_document.close()
 
-os.remove("C:\\Users\\samas\\OneDrive\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf")
+os.remove("C:\\Users\\SAMUEL\\Desktop\\proj\\ajels\\baked-by-ajels-receipt\\receipt_docs\\example.pdf")
 
 #################################################################################
 #increase counters and set read-only on files
